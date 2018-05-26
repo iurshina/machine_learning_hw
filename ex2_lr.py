@@ -68,7 +68,7 @@ def cross_validation(X, y, k, est):
 
 
 def task_a(lm):
-    data = load_data("dataLinReg2D.txt")
+    data = load_data("data/dataLinReg2D.txt")
     X = data[:, :-1]
     y = data[:, -1]
     X = prepend_one(X)
@@ -82,7 +82,7 @@ def task_a(lm):
 
 
 def task_b(lm):
-    data = load_data("dataQuadReg2D.txt")
+    data = load_data("data/dataQuadReg2D.txt")
     X = data[:, :-1]
     y = data[:, -1]
     X = prepend_quadratic_features(X)
@@ -96,7 +96,7 @@ def task_b(lm):
 
 
 def task_c(lm):
-    data = load_data("dataQuadReg2D_noisy.txt")
+    data = load_data("data/dataQuadReg2D_noisy.txt")
     X = data[:, :-1]
     y = data[:, -1]
     X = prepend_quadratic_features(X)

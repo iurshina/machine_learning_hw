@@ -78,7 +78,7 @@ def plot_res_with_prob(data, p):
 
 
 def task_a(lm, steps):
-    data = load_data("data2Class.txt")
+    data = load_data("data/data2Class.txt")
     X = data[:, :-1]
     y = data[:, -1]
     X = prepend_one(X)
@@ -96,7 +96,7 @@ def task_a(lm, steps):
 
 
 def task_b(lm, steps):
-    data = load_data("data2Class.txt")
+    data = load_data("data/data2Class.txt")
     X = data[:, :-1]
     y = data[:, -1]
     X = prepend_quadratic_features(X)
