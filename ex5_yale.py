@@ -30,7 +30,7 @@ def main():
     X = load_data("data/yalefaces/")
 
     # task b
-    m = X.mean(1)
+    m = X.mean(axis=0)
     X_centered = X - m
 
     # task c
