@@ -22,17 +22,6 @@ def show_image(image):
     plt.show()
 
 
-def get_error(X, m, clusters):
-    total_error = 0
-    for c in clusters:
-        points = clusters[c]
-        mu = m[c]
-        for p in X[points]:
-            total_error += np.linalg.norm(p - mu, 2)
-
-    return total_error
-
-
 def k_means(X, k, steps):
     initial_m_idx = np.random.randint(len(X), size=k)
     m = X[initial_m_idx]
@@ -41,6 +30,7 @@ def k_means(X, k, steps):
     total_error = 0
     for s in range(0, steps):
         clusters.clear()
+        total_error = 0
         for j in range(0, len(X)):
             min_dist = np.linalg.norm(X[j] - m[0], 2)
             cluster_id = 0
@@ -50,8 +40,8 @@ def k_means(X, k, steps):
                     min_dist = cur_dist
                     cluster_id = i
             clusters[cluster_id].append(j)
+            total_error += min_dist
 
-        total_error = get_error(X, m, clusters)
         print str(s) + ": " + str(total_error)
 
         if s == steps - 1:
