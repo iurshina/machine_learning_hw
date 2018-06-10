@@ -22,33 +22,43 @@ def show_image(image):
     plt.show()
 
 
+def get_error(X, m, clusters):
+    total_error = 0
+    for c in clusters:
+        points = clusters[c]
+        mu = m[c]
+        for p in X[points]:
+            total_error += np.linalg.norm(p - mu, 2)
+
+    return total_error
+
+
 def k_means(X, k, steps):
     initial_m_idx = np.random.randint(len(X), size=k)
-    m = X[initial_m_idx, :]
+    m = X[initial_m_idx]
 
     clusters = defaultdict(list)
     total_error = 0
     for s in range(0, steps):
         clusters.clear()
-        total_error = 0
         for j in range(0, len(X)):
-            min_er = np.square(np.subtract(X[j], m[0])).sum()
+            min_dist = np.linalg.norm(X[j] - m[0], 2)
             cluster_id = 0
             for i in range(1, len(m)):
-                cur_er = np.square(np.subtract(X[j], m[i])).sum()
-                if min_er > cur_er:
-                    min_er = cur_er
+                cur_dist = np.linalg.norm(X[j] - m[i], 2)
+                if min_dist > cur_dist:
+                    min_dist = cur_dist
                     cluster_id = i
             clusters[cluster_id].append(j)
-            total_error += min_er
 
+        total_error = get_error(X, m, clusters)
         print str(s) + ": " + str(total_error)
 
         if s == steps - 1:
             break
 
         for k in clusters:
-            m[k] = np.mean(X[clusters[k], :], axis=0)
+            m[k] = X[clusters[k]].mean(axis=0)
 
     return m, total_error
 
@@ -63,7 +73,7 @@ def main():
     show_image(m[0])
 
     # task b
-    ks = [2, 4, 8, 16, 32, 64]
+    ks = [2, 3, 4, 5, 6, 7, 9, 10]
     errors = []
     for k in ks:
         errors.append(k_means(X, k, steps)[1])
@@ -87,7 +97,7 @@ def main():
     means, error = k_means(Z, k, steps)
     show_image(m + np.dot(means[0], V_p.T))
 
-    ks = [2, 4, 8, 16, 32, 64]
+    ks = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     errors = []
     for k in ks:
         errors.append(k_means(Z, k, steps)[1])
