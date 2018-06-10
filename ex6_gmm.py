@@ -17,7 +17,7 @@ def gmm_initialized_means(X, k, steps):
     n, d = X.shape
 
     # probabilities for each Gaussian (weights)
-    pi = [1. / k] * k
+    pi = np.ones(k) / k
     # covariance matrices
     cov = [np.identity(d)] * k
 
@@ -112,7 +112,7 @@ def draw_clusters(X, membership_probs):
 def main():
     X = load_data("data/mixture.txt")
     k = 3
-    steps = 1000
+    steps = 100
 
     # task a
     gmm_initialized_means(X, k, steps)
