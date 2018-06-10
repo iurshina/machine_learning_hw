@@ -1,4 +1,5 @@
 import random
+from matplotlib import pyplot
 
 import numpy as np
 
@@ -9,7 +10,6 @@ def load_data(file_name):
 
 
 def G(x, cov, m, k):
-    # is sum ok?
     return 1. / (((2 * np.pi) ** k) * np.linalg.det(cov)) * np.exp(-.5 * np.sum((x - m).T * np.linalg.inv(cov) * (x - m)).T)
 
 
@@ -34,10 +34,10 @@ def gmm_initialized_means(X, k, steps):
             for i in range(0, n):
                 membership_probs[i, j] = pi[j] * G(X[i], cov[j], m[j], k)
 
-            log_likelihoods.append(np.sum(np.log(np.sum(membership_probs, axis=1))))
+        log_likelihoods.append(np.sum(np.log(np.sum(membership_probs, axis=1))))
 
-            # normalize
-            membership_probs = (membership_probs.T / np.sum(membership_probs, axis=1)).T
+        # normalize
+        membership_probs = (membership_probs.T / np.sum(membership_probs, axis=1)).T
 
         # M-step
         for j in range(k):
@@ -51,6 +51,8 @@ def gmm_initialized_means(X, k, steps):
         if len(log_likelihoods) > 2 and np.abs(log_likelihoods[-1] - log_likelihoods[-2]) < 0.0001:
             print "mean-initialized converged"
             break
+
+    draw_clusters(X, membership_probs)
 
 
 def gmm_initialized_posterior(X, k, steps):
@@ -80,13 +82,31 @@ def gmm_initialized_posterior(X, k, steps):
             for i in range(0, n):
                 membership_probs[i, j] = pi[j] * G(X[i], cov[j], m[j], k)
 
-            log_likelihoods.append(np.sum(np.log(np.sum(membership_probs, axis=1))))
+        log_likelihoods.append(np.sum(np.log(np.sum(membership_probs, axis=1))))
 
-            membership_probs = (membership_probs.T / np.sum(membership_probs, axis=1)).T
+        membership_probs = (membership_probs.T / np.sum(membership_probs, axis=1)).T
 
         if len(log_likelihoods) > 2 and np.abs(log_likelihoods[-1] - log_likelihoods[-2]) < 0.0001:
             print "posterior-initialized converged"
             break
+
+    draw_clusters(X, membership_probs)
+
+
+def draw_clusters(X, membership_probs):
+    assignment = []
+    for i in range(0, len(X)):
+        v_max = membership_probs[i][0]
+        j_max = 0
+        for j in range(1, len(membership_probs[i])):
+            if membership_probs[i][j] > v_max:
+                v_max = membership_probs[i][j]
+                j_max = j
+
+        assignment.append(j_max)
+
+    pyplot.scatter(X[:, 0], X[:, 1], c=assignment, cmap='viridis')
+    pyplot.show()
 
 
 def main():
