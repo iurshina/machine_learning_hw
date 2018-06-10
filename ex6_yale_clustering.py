@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import os
+import math
 import numpy as np
 from collections import defaultdict
 
@@ -7,18 +8,33 @@ from collections import defaultdict
 def load_data(path):
     list_dir = os.listdir(path)
     X = []
+    H, W = 0, 0
     for img in list_dir:
         if img == "Readme.txt":
             continue
         else:
             im = plt.imread(path + img)
+            H, W = np.shape(im)
             X.append(im.flatten())
-    return np.matrix(X)
+
+    return np.matrix(X), H, W
 
 
-def show_image(image):
-    image = image.reshape((243, 320))
+def show_image(image, H, W):
+    image = image.reshape((H, W))
     plt.imshow(image, cmap='gray')
+    plt.show()
+
+
+def image_grid(D, H, W, title, cols=10, scale=1):
+    n = np.shape(D)[0]
+    rows = int(math.ceil((n + 0.0) / cols))
+    plt.figure(1, figsize=[scale * 20.0 / H * W, scale * 20.0 / cols * rows], dpi=300)
+    for i in range(n):
+        plt.subplot(rows, cols, i + 1)
+        plt.imshow(np.reshape(D[i, :], [H, W]), cmap=plt.get_cmap("gray"))
+        plt.axis('off')
+    plt.title(title)
     plt.show()
 
 
@@ -50,20 +66,23 @@ def k_means(X, k, steps):
         for k in clusters:
             m[k] = X[clusters[k]].mean(axis=0)
 
-    return m, total_error
+    return m, total_error, clusters
 
 
 def main():
-    X = load_data("data/yalefaces/")
+    X, H, W = load_data("data/yalefaces/")
     # task a
     k = 4
     steps = 10
 
-    m, error = k_means(X, k, steps)
-    show_image(m[0])
+    m, error, clusters = k_means(X, k, steps)
+    image_grid(m, H, W, "Means for task a")
 
-    # task b
-    ks = [2, 3, 4, 5, 6, 7, 9, 10]
+    # for key in clusters:
+        # image_grid(X[clusters[key]], H, W, "Cluster " + str(key) + " for task a")
+
+    # # task b
+    ks = [2, 3, 4, 5, 6, 7, 9, 10, 15]
     errors = []
     for k in ks:
         errors.append(k_means(X, k, steps)[1])
@@ -84,10 +103,15 @@ def main():
 
     k = 4
 
-    means, error = k_means(Z, k, steps)
-    show_image(m + np.dot(means[0], V_p.T))
+    means, error, clusters = k_means(Z, k, steps)
+    # show_image(m + np.dot(means[0], V_p.T), H, W)
 
-    ks = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    # image_grid([m + np.dot(mm, V_p.T) for mm in means], H, W, "Means for task c")
+
+    for key in clusters:
+        image_grid(X[clusters[key]], H, W, "Cluster " + str(key + 1) + " for task c")
+
+    ks = [2, 3, 4, 5, 6, 7, 8, 9, 10, 15]
     errors = []
     for k in ks:
         errors.append(k_means(Z, k, steps)[1])
