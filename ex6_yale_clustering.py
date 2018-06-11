@@ -14,6 +14,7 @@ def load_data(path):
             continue
         else:
             im = plt.imread(path + img)
+            im = im[:, :, 0]
             H, W = np.shape(im)
             X.append(im.flatten())
 
@@ -64,13 +65,13 @@ def k_means(X, k, steps):
             break
 
         for k in clusters:
-            m[k] = X[clusters[k]].mean(axis=0)
+            m[k] = np.mean(X[clusters[k]], axis=0)
 
     return m, total_error, clusters
 
 
 def main():
-    X, H, W = load_data("data/yalefaces/")
+    X, H, W = load_data("data/yalefaces_cropBackground/")
     # task a
     k = 4
     steps = 10
@@ -78,8 +79,8 @@ def main():
     m, error, clusters = k_means(X, k, steps)
     image_grid(m, H, W, "Means for task a")
 
-    # for key in clusters:
-        # image_grid(X[clusters[key]], H, W, "Cluster " + str(key) + " for task a")
+    for key in clusters:
+        image_grid(X[clusters[key]], H, W, "Cluster " + str(key) + " for task a")
 
     # # task b
     ks = [2, 3, 4, 5, 6, 7, 9, 10, 15]
@@ -92,7 +93,7 @@ def main():
     plt.ylabel("error")
     plt.show()
 
-    # task c (with PCA it converges)
+    # task c
     m = X.mean(axis=0)
     X_centered = X - m
 
