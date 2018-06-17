@@ -2,7 +2,6 @@ from __future__ import print_function
 
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 
 alpha = .05
@@ -47,19 +46,14 @@ def update_weights(x, hidden, W_h, W_o, delta_h, delta_o):
     return W_h, W_o
 
 
-def plot(data, f):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    ones = np.array(f[:] > 0)
-
-    ax.scatter(data[ones, 1], data[ones, 2], f[ones], c='r', marker='o')
-    ax.scatter(data[~ones, 1], data[~ones, 2], f[~ones], c='b', marker='v')
-
-    ax.set_xlabel('x_1')
-    ax.set_ylabel('x_2')
-    ax.set_zlabel('f')
-
+def plot(W_0, W_1):
+    h = 0.02
+    xx, yy = np.meshgrid(np.arange(-2, 2, h),np.arange(-2, 2, h))
+    Z = np.c_[np.ones(xx.shape[0] * xx.shape[1]), xx.ravel(), yy.ravel()]
+    Z = sigmoid(forward(Z, W_0, W_1)[1])
+    Z = Z.reshape(xx.shape)
+    plt.contourf(xx, yy, Z)
+    plt.colorbar()
     plt.show()
 
 
@@ -92,7 +86,7 @@ def main():
 
         print ("Iteration: ", s, " loss: ", loss, " num_err: ", num_err)
 
-    plot(data, np.array(f).ravel())
+    plot(W_h, W_o)
 
 
 if __name__ == '__main__':
