@@ -71,7 +71,6 @@ def main():
 
     N = 500
     for s in range(N):
-        f = []
         hidden, predicted = forward(X, W_h, W_o)
         loss = hinge_loss(Y, predicted)
         num_err = (np.sign(predicted) != Y).sum()
@@ -81,8 +80,6 @@ def main():
             delta_h, delta_o = backward(y, predicted, hidden, W_o)
 
             W_h, W_o = update_weights(x, hidden, W_h, W_o, delta_h, delta_o)
-
-            f.append(predicted)
 
         print ("Iteration: ", s, " loss: ", loss, " num_err: ", num_err)
 
