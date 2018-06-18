@@ -24,7 +24,7 @@ def forward(x, W_h, W_o):
 
 
 def backward(y, predicted, hidden, W_o):
-    delta_o = -y * (1.- y * predicted)
+    delta_o = -y * np.sign(1.- y * predicted)
     delta_h = hidden * (1. - hidden) * W_o.ravel() * delta_o
 
     return delta_h, delta_o
@@ -69,7 +69,7 @@ def main():
     W_h = np.random.random((features_n, hidden_n_n))
     W_o = np.random.random((hidden_n_n, n_classes))
 
-    N = 1000
+    N = 500
     for s in range(N):
         f = []
         hidden, predicted = forward(X, W_h, W_o)
